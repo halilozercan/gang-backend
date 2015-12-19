@@ -64,6 +64,10 @@ def close_connection(exception):
         db.close()
 
 
+@app.route('/users', methods=["GET"])
+def users():
+    return str(len(query_db("SELECT * FROM USERS")))
+
 @app.route('/', methods=["GET"])
 def index():
     if current_user.is_authenticated and not current_user.is_anonymous:

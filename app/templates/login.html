@@ -26,10 +26,11 @@
             display: inline-flex;
         }​
 
-        .loginButton{
-            margin: 0 auto 0 auto;
-            width: 400px;
+        #status{
+            color: #DDDDDD;
         }
+
+
     </style>
 </head>
 <body>
@@ -41,6 +42,7 @@
             <fb:login-button onlogin="checkLoginState();" scope="public_profile,email" show-faces="false" size="xlarge" max-rows="1">
 
             </fb:login-button>
+            <p>
             <div id="status">
 
             </div>
