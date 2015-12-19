@@ -11,7 +11,7 @@ c.execute("DROP TABLE IF EXISTS SUBSCRIBES")
 c.execute("DROP TABLE IF EXISTS READS")
 
 c.execute("CREATE TABLE USERS(" + \
-          "id INTEGER PRIMARY KEY ASC, " + \
+          "id TEXT PRIMARY KEY, " + \
           "email TEXT, " + \
           "name TEXT, " + \
           "surname TEXT, " + \

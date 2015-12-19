@@ -1,6 +1,6 @@
 class User():
-    def __init__(self, email, name, surname, profile_pic):
-        self.id = ""
+    def __init__(self, id, email, name, surname, profile_pic):
+        self.id = id
         self.email = email
         self.name = name
         self.surname = surname
@@ -9,9 +9,9 @@ class User():
     def register(self, db):
         try:
             cursor = db.cursor()
-            cursor.execute("INSERT INTO USERS (email, name, surname, profile_pic) VALUES ( ?, ? , ? , ?)",
-                           [self.email, self.name, self.surname, self.profile_pic])
-            self.id = unicode(cursor.lastrowid)
+            cursor.execute("INSERT INTO USERS (id, email, name, surname, profile_pic) " +
+                           "VALUES ( ?, ? , ? , ?)",
+                           [self.id, self.email, self.name, self.surname, self.profile_pic])
             db.commit()
             return True
         except:

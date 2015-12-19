@@ -67,6 +67,7 @@ def close_connection(exception):
 
 @app.route("/login", methods=["POST"])
 def login():
+    id = request.form['id']
     email = request.form['email']
     token = request.form['token']
     name = request.form['name']
@@ -77,14 +78,15 @@ def login():
     if token_validation_result is not None and token_validation_result['email'] == email:
         user_from_db = query_db('SELECT * FROM USERS WHERE email = ?', [email], one=True)
         if user_from_db is None:
-            user = User(email, name, surname, profile_pic)
+            user = User(id, email, name, surname, profile_pic)
             print "result of register " + str(user.register(get_db()))
         else:
-            user = User(user_from_db['email'],
+            user = User(user_from_db['id'],
+                        user_from_db['email'],
                         user_from_db['name'],
                         user_from_db['surname'],
                         user_from_db['profile_pic'])
-            user.id = user_from_db['id']
+            user.register(get_db())
 
         login_user(user)
         return json.dumps({'success': True})
@@ -97,6 +99,19 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('index'))
+
+
+@app.route('/getUser', methods=["GET"])
+@login_required
+def get_user():
+    user = {
+        'id' : current_user.id,
+        'email': current_user.email,
+        'name': current_user.name,
+        'surname': current_user.surname,
+        'picture': current_user.profile_pic
+    }
+    return json.dump(user)
 
 
 @app.route('/users', methods=["GET"])
@@ -136,12 +151,17 @@ def get_groups():
                                 [group_id],
                                 one=True)
 
-        group['last_thread'] = last_message['U2.name'] + ' ' + \
-                               last_message['U2.surname'] + ': ' + \
-                               last_message['THREADS.title']
+        group['last_thread'] = \
+            {
+                'name': last_message['U2.name'],
+                'surname': last_message['U2.surname'],
+                'profile_pic': last_message['U2.profile_pic']
+                'title': last_message['THREADS.title']
+            }
 
         threads_from_db = query_db("SELECT * FROM THREADS WHERE group_id = ?",
                                    [group_id])
+
         nonReadThreadCount = 0
         for thread in threads_from_db:
             thread_last_checked = query_db("SELECT * FROM READS WHERE thread_id = ? AND user_id = ?",
@@ -180,7 +200,11 @@ def get_threads(group_id):
     threads = []
     for thread_from_db in threads_from_db:
         thread = {}
-        thread['op'] = thread_from_db['USERS.name'] + ' ' + thread_from_db['USERS.surname']
+        thread['op'] = {
+            'name': thread_from_db['USERS.name'],
+            'surname': thread_from_db['USERS.surname'],
+            'profile_pic': thread_from_db['USERS.profile_pic']
+        }
         thread['content'] = thread_from_db['THREADS.content']
         thread['thumbnail'] = thread_from_db['THREADS.thumbnail']
         thread['title'] = thread_from_db['THREADS.title']
@@ -217,8 +241,12 @@ def get_thread(thread_id):
         for message_from_db in last_messages_from_db:
             message = {}
             message['id'] = message_from_db['MESSAGES.id']
-            message['name'] = message_from_db['USERS.name'] + ' ' + message_from_db['USERS.surname']
-            message['user_id'] = message_from_db['USERS.id']
+            message['user'] = {
+                'id': message_from_db['USERS.id'],
+                'name': message_from_db['USERS.name'],
+                'surname': message_from_db['USERS.surname'],
+                'profile_pic': message_from_db['USERS.profile_pic']
+            }
             message['thread_id'] = message_from_db['MESSAGES.thread_id']
             message['content'] = message_from_db['MESSAGES.content']
             message['thumbnail'] = message_from_db['MESSAGES.thumbnail']
@@ -228,6 +256,10 @@ def get_thread(thread_id):
 
             socketio.emit('message', message, room=sessions[user_id])
 
+
+@app.route('/createGroup', methods=["POST"])
+def create_group():
+    return True
 
 @socketio.on('connect')
 def connect_handler():
@@ -266,7 +298,6 @@ def authenticated_only(f):
 def chat_message(json):
 
     message = {}
-    message['user_id'] = current_user.id
     message['thread_id'] = json['thread_id']
     message['content'] = json['content']
     client_timestamp = json['client_timestamp']
@@ -292,7 +323,12 @@ def chat_message(json):
                                     [message_id],
                                     one=True)
     message['id'] = message_id
-    message['name'] = user['name'] + ' ' + user['surname']
+    message['user'] = {
+        'id': current_user.id,
+        'name': user['name'],
+        'surname': user['surname'],
+        'profile_pic': user['profile_pic']
+    }
     message['timestamp'] = message_back_from_db['timestamp']
 
     group_id = query_db("SELECT * FROM THREADS WHERE id = ?", [message['thread_id']], one=True)['group_id']
