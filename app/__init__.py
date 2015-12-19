@@ -23,11 +23,10 @@ sessions = {}
 @login_manager.user_loader
 def load_user(user_id):
     print "id ", user_id
-    user_from_db = query_db('SELECT * FROM USERS WHERE id = ?', [int(user_id)], one=True)
+    user_from_db = query_db('SELECT * FROM USERS WHERE id = ?', [user_id], one=True)
     if user_from_db is None:
         return None
-    user = User(user_from_db['email'], user_from_db['name'], user_from_db['surname'], user_from_db['birth_date'])
-    user.id = user_from_db['id']
+    user = User(user_from_db['id'], user_from_db['email'], user_from_db['name'], user_from_db['surname'], user_from_db['profile_pic'])
     return user
 
 
