@@ -69,8 +69,8 @@
       <file leaf-file-name="login.html" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/templates/login.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.76026636">
-              <caret line="87" column="125" selection-start-line="87" selection-start-column="125" selection-end-line="87" selection-end-column="125" />
+            <state vertical-scroll-proportion="0.25971144">
+              <caret line="13" column="42" selection-start-line="13" selection-start-column="42" selection-end-line="13" selection-end-column="42" />
               <folding />
             </state>
           </provider>
@@ -449,7 +449,13 @@
       <option name="project" value="LOCAL" />
       <updated>1450550351177</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="facebook login button">
+      <created>1450550627114</created>
+      <option name="number" value="00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1450550627114</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -481,7 +487,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="login required&#10;get Thread" />
-    <option name="LAST_COMMIT_MESSAGE" value="login required&#10;get Thread" />
+    <MESSAGE value="facebook login button" />
+    <option name="LAST_COMMIT_MESSAGE" value="facebook login button" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -654,8 +661,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/templates/login.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.76026636">
-          <caret line="87" column="125" selection-start-line="87" selection-start-column="125" selection-end-line="87" selection-end-column="125" />
+        <state vertical-scroll-proportion="0.25971144">
+          <caret line="13" column="42" selection-start-line="13" selection-start-column="42" selection-end-line="13" selection-end-column="42" />
           <folding />
         </state>
       </provider>
