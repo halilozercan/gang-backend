@@ -80,6 +80,7 @@ def chat():
 
 
 @app.route('/getGangs', methods=["GET"])
+@login_required
 def get_groups():
     user_id = current_user.id
     subs_from_db = query_db("SELECT * FROM SUBSCRIBES WHERE user_id = ?", [int(user_id)])
@@ -122,6 +123,7 @@ def get_groups():
 
 
 @app.route('/getThreads/<group_id>')
+@login_required
 def get_threads(group_id):
     group_id = int(group_id)
     user_id = current_user.id
@@ -150,6 +152,30 @@ def get_threads(group_id):
 
         threads.append(thread)
     return json.dumps({"success": True, "count": len(threads), "threads": threads})
+
+
+@app.route("/getThread/<thread_id>")
+@login_required
+def get_thread(thread_id):
+    thread_id = int(thread_id)
+    user_id = current_user.id
+    if sessions[user_id] is not None:
+        last_messages_from_db = query_db("SELECT * FROM MESSAGES, USERS " +
+                                         "WHERE MESSAGES.user_id = USERS.id AND " +
+                                         "thread_id = ?", [thread_id])
+        for message_from_db in last_messages_from_db:
+            message = {}
+            message['id'] = message_from_db['MESSAGES.id']
+            message['name'] = message_from_db['USERS.name'] + ' ' + message_from_db['USERS.surname']
+            message['user_id'] = message_from_db['USERS.id']
+            message['thread_id'] = message_from_db['MESSAGES.thread_id']
+            message['content'] = message_from_db['MESSAGES.content']
+            message['thumbnail'] = message_from_db['MESSAGES.thumbnail']
+            message['title'] = message_from_db['MESSAGES.title']
+            message['description'] = message_from_db['MESSAGES.description']
+            message['timestamp'] = message_from_db['MESSAGES.timestamp']
+
+            socketio.emit('message', message, room=sessions[user_id])
 
 
 @app.route("/login", methods=["POST"])
