@@ -66,7 +66,7 @@ def close_connection(exception):
 
 @app.route('/', methods=["GET"])
 def index():
-    if current_user.is_authenticated:
+    if current_user.is_authenticated and not current_user.is_anonymous:
         return redirect(url_for('chat'))
     else:
         print 'rendering login'
