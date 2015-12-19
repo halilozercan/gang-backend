@@ -5,6 +5,7 @@ class User():
         self.name = name
         self.surname = surname
         self.profile_pic = profile_pic
+        self.token = ""
 
     def register(self, db):
         cursor = db.cursor()
