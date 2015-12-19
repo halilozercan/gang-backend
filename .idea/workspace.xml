@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="18e7f4de-724b-459f-901f-0f0e30124ce8" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/templates/chat.html" afterPath="$PROJECT_DIR$/app/templates/chat.html" />
-    </list>
+    <list default="true" id="18e7f4de-724b-459f-901f-0f0e30124ce8" name="Default" comment="" />
     <ignored path="gang-backend.iws" />
     <ignored path=".idea/workspace.xml" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />

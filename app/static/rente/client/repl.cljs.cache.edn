@@ -1,0 +1,2 @@
+;; Analyzed by ClojureScript 1.7.189
+{:name rente.client.repl, :doc nil, :excludes #{}, :use-macros {go-loop cljs.core.async.macros}, :require-macros {cljs.core.async.macros cljs.core.async.macros}, :uses nil, :requires {ws rente.client.ws, rente.client.ws rente.client.ws, repl weasel.repl, weasel.repl weasel.repl}, :imports nil}
