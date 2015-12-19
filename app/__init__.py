@@ -86,6 +86,7 @@ def login():
                         user_from_db['surname'],
                         user_from_db['profile_pic'])
 
+        user.token = token
         login_user(user)
         return json.dumps({'success': True})
     else:
@@ -97,6 +98,14 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('index'))
+
+
+@app.route("/getFriends")
+@login_required
+def get_friends():
+    return requests.get("https://graph.facebook.com/" +
+                                          "me/friends?fields=id,name,picture&" +
+                                          "access_token=" + current_user.token).text
 
 
 @app.route('/getUser', methods=["GET"])
@@ -127,7 +136,6 @@ def index():
 
 
 @app.route('/chat')
-@login_required
 def chat():
     return render_template('chat.html')
 
