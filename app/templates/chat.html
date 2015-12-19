@@ -24,10 +24,12 @@
       var socket = io('/');
       socket.on('connect', function(result){
         console.log(result);
-        
+
       });
       $('form').submit(function(){
-        socket.emit('chat message', $('#m').val());
+        socket.emit('chat message', $('#m').val(), function(response){
+          console.log(response);
+        });
         $('#m').val('');
         return false;
       });

@@ -212,6 +212,11 @@ def disconnect():
     print('Client disconnected')
 
 
+@socketio.on('chat message')
+def chatmessage(string):
+    return string
+
+
 @socketio.on('message')
 @authenticated_only
 def chat_message(json):
