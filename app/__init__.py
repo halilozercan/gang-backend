@@ -259,6 +259,7 @@ def get_thread(thread_id):
 def create_group():
     return True
 
+
 @socketio.on('connect')
 def connect_handler():
     if current_user.is_authenticated:
