@@ -22,13 +22,9 @@
     <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
     <script>
       var socket = io('/');
-      socket.on('connect', function(){
-        if(socket.connected){
-          $('#messages').append($('<li>').text('Connected'));
-        }
-        else{
-          $('#messages').append($('<li>').text('Failed'));
-        }
+      socket.on('connect', function(result){
+        console.log(result);
+        
       });
       $('form').submit(function(){
         socket.emit('chat message', $('#m').val());
