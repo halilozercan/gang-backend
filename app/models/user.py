@@ -9,7 +9,7 @@ class User():
     def register(self, db):
         cursor = db.cursor()
         cursor.execute("INSERT INTO USERS (id, email, name, surname, profile_pic) " +
-                       "VALUES ( ?, ? , ? , ?)",
+                       "VALUES (?, ?, ?, ?, ?)",
                        [self.id, self.email, self.name, self.surname, self.profile_pic])
         db.commit()
         return True
