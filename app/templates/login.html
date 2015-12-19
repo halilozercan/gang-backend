@@ -4,15 +4,54 @@
 <title>Facebook Login JavaScript Example</title>
 <meta charset="UTF-8">
     <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+    <style>
+        video#bgvid {
+            position: fixed; right: 0; bottom: 0;
+            min-width: 100%; min-height: 100%;
+            width: auto; height: auto; z-index: -100;
+            background: url(../bg.jpg) no-repeat;
+            background-size: cover;
+
+        }
+        .centered{
+            height:200px;
+            width:400px;
+            position: fixed;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius:25px;
+            top: 50%;
+            left: 50%;
+            -webkit-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);
+            display: inline-flex;
+        }​
+
+        .loginButton{
+            margin: 0 auto 0 auto;
+            width: 400px;
+        }
+    </style>
 </head>
 <body>
-<div id="fb-root"></div>
+<video autoplay loop poster="{{ url_for( '.static', filename = 'bg.png') }}" id="bgvid">
+    <source src="{{ url_for( '.static', filename = 'bg.webm') }}" type="video/webm">
+</video>
+    <div class="centered">
+        <div style="width:400px;margin: auto 5px;" align="center">
+            <fb:login-button onlogin="checkLoginState();" scope="public_profile,email" show-faces="false" size="xlarge" max-rows="1">
+
+            </fb:login-button>
+            <div id="status">
+
+            </div>
+        </div>
+    </div>
 <script>
     (function(d, s, id) {
       var js, fjs = d.getElementsByTagName(s)[0];
       if (d.getElementById(id)) return;
       js = d.createElement(s); js.id = id;
-      js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.5&appId=585137798276415";
+      js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.5&appId=1625289174404680";
       fjs.parentNode.insertBefore(js, fjs);
     }(document, 'script', 'facebook-jssdk'));
 
@@ -22,6 +61,7 @@
         if (response.status === 'connected') {
           // Logged into your app and Facebook.
           console.log(response.authResponse.accessToken);
+          document.getElementById('status').innerHTML = 'Connected to Facebook...';
           //testAPI();
             token_from_fb = response.authResponse.accessToken;
             FB.api('/me', {fields: 'email,first_name,last_name'}, function(api_response) {
@@ -58,16 +98,6 @@
     });
   }
 
-  window.fbAsyncInit = function() {
-      FB.init({
-        appId      : '1625289174404680',
-        cookie     : true,  // enable cookies to allow the server to access
-                            // the session
-        xfbml      : true,  // parse social plugins on this page
-        version    : 'v2.2' // use version 2.2
-      });
-  };
-
   // Here we run a very simple test of the Graph API after login is
   // successful.  See statusChangeCallback() for when this call is made.
   function testAPI() {
@@ -79,17 +109,6 @@
     });
   }
 </script>
-
-<!--
-  Below we include the Login Button social plugin. This button uses
-  the JavaScript SDK to present a graphical Login button that triggers
-  the FB.login() function when clicked.
--->
-
-<div class="fb-login-button" data-max-rows="1" data-size="xlarge" data-show-faces="true" data-auto-logout-link="false"></div>
-
-<div id="status">
-</div>
 
 </body>
 </html>
