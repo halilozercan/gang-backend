@@ -15,7 +15,7 @@ c.execute("CREATE TABLE USERS(" + \
           "email TEXT, " + \
           "name TEXT, " + \
           "surname TEXT, " + \
-          "birth_date DATETIME, " + \
+          "profile_pic TEXT, " + \
           "join_date DATETIME DEFAULT CURRENT_TIMESTAMP)")
 
 c.execute("CREATE TABLE GROUPS(" + \

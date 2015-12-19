@@ -1,16 +1,16 @@
 class User():
-    def __init__(self, email, name, surname, birth_date):
+    def __init__(self, email, name, surname, profile_pic):
         self.id = ""
         self.email = email
         self.name = name
         self.surname = surname
-        self.birth_date = birth_date
+        self.profile_pic = profile_pic
 
     def register(self, db):
         try:
             cursor = db.cursor()
-            cursor.execute("INSERT INTO USERS (email, name, surname, birth_date) VALUES ( ?, ? , ? , ?)",
-                           [self.email, self.name, self.surname, self.birth_date])
+            cursor.execute("INSERT INTO USERS (email, name, surname, profile_pic) VALUES ( ?, ? , ? , ?)",
+                           [self.email, self.name, self.surname, self.profile_pic])
             self.id = unicode(cursor.lastrowid)
             db.commit()
             return True

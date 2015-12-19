@@ -66,12 +66,13 @@
           document.getElementById('status').innerHTML = 'Connected to Facebook...';
           //testAPI();
             token_from_fb = response.authResponse.accessToken;
-            FB.api('/me', {fields: 'email,first_name,last_name'}, function(api_response) {
+            FB.api('/me', {fields: 'email,first_name,last_name,picture'}, function(api_response) {
                 console.log(api_response);
                 $.post( "login", {  email: api_response.email,
                                     token: token_from_fb,
                                     name: api_response.first_name,
-                                    surname: api_response.last_name
+                                    surname: api_response.last_name,
+                                    picture: api_response.picture
                                  } ,
                                  function(data){
                                     data = $.parseJSON(data);

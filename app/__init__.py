@@ -19,6 +19,7 @@ DATABASE = 'gang.db'
 from models import User, Group
 sessions = {}
 
+
 @login_manager.user_loader
 def load_user(user_id):
     print "id ", user_id
@@ -64,9 +65,44 @@ def close_connection(exception):
         db.close()
 
 
+@app.route("/login", methods=["POST"])
+def login():
+    email = request.form['email']
+    token = request.form['token']
+    name = request.form['name']
+    surname = request.form['surname']
+    profile_pic = request.form['picture']
+    token_validation_result = requests.get("https://graph.facebook.com/me?fields=email&access_token=" + token).json()
+    print(token_validation_result)
+    if token_validation_result is not None and token_validation_result['email'] == email:
+        user_from_db = query_db('SELECT * FROM USERS WHERE email = ?', [email], one=True)
+        if user_from_db is None:
+            user = User(email, name, surname, profile_pic)
+            print "result of register " + str(user.register(get_db()))
+        else:
+            user = User(user_from_db['email'],
+                        user_from_db['name'],
+                        user_from_db['surname'],
+                        user_from_db['profile_pic'])
+            user.id = user_from_db['id']
+
+        login_user(user)
+        return json.dumps({'success': True})
+    else:
+        return json.dumps({'success': False})
+
+
+@app.route("/logout")
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('index'))
+
+
 @app.route('/users', methods=["GET"])
 def users():
     return str(len(query_db("SELECT * FROM USERS")))
+
 
 @app.route('/', methods=["GET"])
 def index():
@@ -151,10 +187,21 @@ def get_threads(group_id):
         thread['description'] = thread_from_db['THREADS.description']
         thread['last_message_time'] = query_db("SELECT * FROM MESSAGES " +
                                                "WHERE thread_id = ? ORDER BY timestamp DESC",
-                                               [thread_from_db['id']],
+                                               [thread_from_db['THREADS.id']],
                                                one=True)['timestamp']
 
+        last_seen = query_db("SELECT * FROM READS WHERE user_id = ? AND thread_id = ?",
+                             [int(user_id), thread_from_db['THREADS.id']],
+                             one=True)['last_checked']
+
+        thread['not_read_total'] = query_db("SELECT COUNT(*) AS total "
+                                            "FROM MESSAGES "
+                                            "WHERE thread_id = ? AND timestamp > ?",
+                                            [thread_from_db['THREADS.id'], last_seen],
+                                            one=True)['total']
+
         threads.append(thread)
+
     return json.dumps({"success": True, "count": len(threads), "threads": threads})
 
 
@@ -182,43 +229,6 @@ def get_thread(thread_id):
             socketio.emit('message', message, room=sessions[user_id])
 
 
-@app.route("/login", methods=["POST"])
-def login():
-    email = request.form['email']
-    token = request.form['token']
-    name = request.form['name']
-    surname = request.form['surname']
-    token_validation_result = requests.get("https://graph.facebook.com/me?fields=email&access_token=" + token).json()
-    print(token_validation_result)
-    if token_validation_result is not None and token_validation_result['email'] == email:
-        user_from_db = query_db('SELECT * FROM USERS WHERE email = ?', [email], one=True)
-        if user_from_db is None:
-            user = User(email, name, surname, None)
-            print "result of register " + str(user.register(get_db()))
-        else:
-            user = User(user_from_db['email'],
-                        user_from_db['name'],
-                        user_from_db['surname'],
-                        user_from_db['birth_date'])
-            user.id = user_from_db['id']
-
-        login_user(user)
-        return json.dumps({'success': True})
-    else:
-        return json.dumps({'success': False})
-
-
-def authenticated_only(f):
-    @functools.wraps(f)
-    def wrapped(*args, **kwargs):
-        if not current_user.is_authenticated:
-            disconnect()
-        else:
-            return f(*args, **kwargs)
-
-    return wrapped
-
-
 @socketio.on('connect')
 def connect_handler():
     if current_user.is_authenticated:
@@ -230,21 +240,25 @@ def connect_handler():
         return False  # not allowed here
 
 
-@app.route("/logout")
-@login_required
-def logout():
-    logout_user()
-    return redirect(url_for('index'))
-
-
 @socketio.on('disconnect')
 def disconnect():
     print('Client disconnected')
 
 
 @socketio.on('chat message')
-def chatmessage(string):
+def chat_message(string):
     return string
+
+
+def authenticated_only(f):
+    @functools.wraps(f)
+    def wrapped(*args, **kwargs):
+        if not current_user.is_authenticated:
+            disconnect()
+        else:
+            return f(*args, **kwargs)
+
+    return wrapped
 
 
 @socketio.on('message')
