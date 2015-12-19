@@ -7,15 +7,12 @@ class User():
         self.profile_pic = profile_pic
 
     def register(self, db):
-        try:
-            cursor = db.cursor()
-            cursor.execute("INSERT INTO USERS (id, email, name, surname, profile_pic) " +
-                           "VALUES ( ?, ? , ? , ?)",
-                           [self.id, self.email, self.name, self.surname, self.profile_pic])
-            db.commit()
-            return True
-        except:
-            return False
+        cursor = db.cursor()
+        cursor.execute("INSERT INTO USERS (id, email, name, surname, profile_pic) " +
+                       "VALUES ( ?, ? , ? , ?)",
+                       [self.id, self.email, self.name, self.surname, self.profile_pic])
+        db.commit()
+        return True
 
     def __repr__(self):
         return '<email {}>'.format(self.email)
