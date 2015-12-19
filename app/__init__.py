@@ -76,7 +76,7 @@ def login():
     token_validation_result = requests.get("https://graph.facebook.com/me?fields=email&access_token=" + token).json()
     print(token_validation_result)
     if token_validation_result is not None and token_validation_result['email'] == email:
-        user_from_db = query_db('SELECT * FROM USERS WHERE email = ?', [email], one=True)
+        user_from_db = query_db('SELECT * FROM USERS WHERE id = ?', [id], one=True)
         if user_from_db is None:
             user = User(id, email, name, surname, profile_pic)
             print "result of register " + str(user.register(get_db()))
@@ -86,7 +86,6 @@ def login():
                         user_from_db['name'],
                         user_from_db['surname'],
                         user_from_db['profile_pic'])
-            user.register(get_db())
 
         login_user(user)
         return json.dumps({'success': True})
