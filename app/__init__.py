@@ -72,7 +72,7 @@ def login():
     token = request.form['token']
     name = request.form['name']
     surname = request.form['surname']
-    profile_pic = request.form['picture']
+    profile_pic = request.form['profile_pic']
     token_validation_result = requests.get("https://graph.facebook.com/me?fields=email&access_token=" + token).json()
     print(token_validation_result)
     if token_validation_result is not None and token_validation_result['email'] == email:
@@ -155,7 +155,7 @@ def get_groups():
             {
                 'name': last_message['U2.name'],
                 'surname': last_message['U2.surname'],
-                'profile_pic': last_message['U2.profile_pic']
+                'profile_pic': last_message['U2.profile_pic'],
                 'title': last_message['THREADS.title']
             }
 
