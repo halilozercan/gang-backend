@@ -2,7 +2,7 @@
 import json
 
 import os
-from flask import Flask, render_template, send_from_directory, request, redirect, url_for, g
+from flask import Flask, render_template, send_from_directory, request, redirect, url_for, g, session
 from flask.ext.login import LoginManager, login_user, current_user, login_required, logout_user
 from flask_socketio import SocketIO
 import requests
@@ -86,7 +86,7 @@ def login():
                         user_from_db['surname'],
                         user_from_db['profile_pic'])
 
-        user.token = token
+        session['token'] = token
         login_user(user)
         return json.dumps({'success': True})
     else:
@@ -103,10 +103,10 @@ def logout():
 @app.route("/getFriends")
 @login_required
 def get_friends():
-    print "token for accessing friends: " + current_user.token
+    print "token for accessing friends: " + session['token']
     return requests.get("https://graph.facebook.com/" +
                                           "me/friends?fields=id,name,picture&" +
-                                          "access_token=" + current_user.token).text
+                                          "access_token=" + session['token']).text
 
 
 @app.route('/getUser', methods=["GET"])
