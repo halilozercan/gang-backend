@@ -103,6 +103,7 @@ def logout():
 @app.route("/getFriends")
 @login_required
 def get_friends():
+    print "token for accessing friends: " + current_user.token
     return requests.get("https://graph.facebook.com/" +
                                           "me/friends?fields=id,name,picture&" +
                                           "access_token=" + current_user.token).text
